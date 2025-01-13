@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Обновляем код из репозитория, если есть
-git pull
+# Запуск health check сервера в фоновом режиме
+python health_check.py &
 
-# Останавливаем старые контейнеры
-docker-compose down
-
-# Собираем и запускаем новые
-docker-compose up --build -d
-
-# Выводим логи
-docker-compose logs -f 
+# Запуск основного бота
+exec python bot.py 

@@ -2,17 +2,39 @@ version: '3.8'
 
 services:
   bot:
-    build: .
-    container_name: tarot-bot
-    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: mw_tarot_bot
+    restart: unless-stopped
     volumes:
-      - ./data:/app/data
-      - ./images:/app/images
-      - ./.env:/app/.env
+      - ./logs:/app/logs:rw
+      - ./images/tarot:/app/images/tarot:ro
+      - ./data:/app/data:rw
+    env_file:
+      - .env
     environment:
       - TZ=Europe/Moscow
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "3" 
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - bot_network
+
+networks:
+  bot_network:
+    driver: bridge 
