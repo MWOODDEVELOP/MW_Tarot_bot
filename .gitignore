@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -21,11 +20,9 @@ wheels/
 .installed.cfg
 *.egg
 
-# Данные
-data/*.json
-!data/tarot_deck.json
-
-# Виртуальное окружение
+# Virtual Environment
+.env
+.venv
 venv/
 ENV/
 
@@ -35,8 +32,11 @@ ENV/
 *.swp
 *.swo
 
-# Логи
+# Project specific
+data/users.json
+logs/
 *.log
 
-# Docker
-.docker/ 
+# OS specific
+.DS_Store
+Thumbs.db 

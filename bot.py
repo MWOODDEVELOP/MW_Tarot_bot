@@ -1,22 +1,26 @@
-import json
-import random
-import os
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InputFile
-from aiogram.utils import executor
-from config import BOT_TOKEN
+from aiogram import Bot, Dispatcher, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+import asyncio
+import logging
+from settings import settings
 from handlers import register_handlers
-from utils.card_manager import CardManager
+from utils.daily_predictions import DailyPredictionManager
 
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
+# Инициализация бота и диспетчера
+bot = Bot(token=settings.BOT_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
 
-def main():
-    # Регистрация всех обработчиков
-    register_handlers(dp)
-    
-    # Запуск бота
-    executor.start_polling(dp, skip_updates=True)
+# Регистрация хендлеров
+register_handlers(dp)
 
-if __name__ == "__main__":
-    main() 
+# Инициализация менеджера ежедневных предсказаний
+daily_predictions = DailyPredictionManager(bot)
+
+async def on_startup(dp):
+    # Запуск планировщика ежедневных предсказаний
+    asyncio.create_task(daily_predictions.schedule_daily_predictions())
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup) 

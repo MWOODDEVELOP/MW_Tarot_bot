@@ -1,11 +1,18 @@
-version: '3'
+version: '3.8'
 
 services:
   bot:
     build: .
+    container_name: tarot-bot
+    restart: always
     volumes:
       - ./data:/app/data
       - ./images:/app/images
-    restart: always
+      - ./.env:/app/.env
     environment:
-      - TZ=Europe/Moscow 
+      - TZ=Europe/Moscow
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3" 

@@ -1,0 +1,26 @@
+{
+    "599081669": {
+        "spreads_today": 3,
+        "last_spread_date": "2025-01-13T05:14:49.402371",
+        "theme": "dark",
+        "show_images": true,
+        "daily_prediction": true,
+        "last_daily_prediction": null
+    },
+    "8037068804": {
+        "spreads_today": 0,
+        "last_spread_date": null,
+        "theme": "light",
+        "show_images": true,
+        "daily_prediction": false,
+        "last_daily_prediction": null
+    },
+    "7463245151": {
+        "spreads_today": 1,
+        "last_spread_date": "2025-01-13T06:05:07.113875",
+        "theme": "light",
+        "show_images": true,
+        "daily_prediction": false,
+        "last_daily_prediction": null
+    }
+}
