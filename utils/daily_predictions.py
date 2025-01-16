@@ -4,13 +4,18 @@ import logging
 from aiogram import Bot
 from utils.user_manager import UserManager
 from utils.card_manager import CardManager
-from settings import settings
+from utils.image_manager import ImageManager
+from handlers import last_messages
+from io import BytesIO
+import pytz
+import random
 
 class DailyPredictionManager:
     def __init__(self, bot: Bot):
         self.bot = bot
         self.user_manager = UserManager()
         self.card_manager = CardManager()
+        self.image_manager = ImageManager()
         self.is_running = False
     
     async def send_daily_predictions(self):
@@ -29,29 +34,54 @@ class DailyPredictionManager:
                     "Хорошего вам дня! ✨"
                 )
                 
+                # Сохраняем старый ID сообщения
+                old_message_id = None
+                if str(user_id) in last_messages and "bot" in last_messages[str(user_id)]:
+                    old_message_id = last_messages[str(user_id)]["bot"]
+                
+                # Отправляем новое сообщение
                 if user["show_images"]:
-                    image_path = f"{settings.IMAGES_PATH}{card['en']}.jpg"
                     try:
-                        with open(image_path, 'rb') as photo:
-                            await self.bot.send_photo(
+                        # Получаем оптимизированное изображение через ImageManager
+                        image_bytes = await self.image_manager.get_image(card['en'])
+                        if image_bytes:
+                            photo = BytesIO(image_bytes)
+                            photo.name = f"{card['en']}.jpg"
+                            new_message = await self.bot.send_photo(
                                 user_id,
                                 photo=photo,
                                 caption=message_text,
                                 parse_mode="Markdown"
                             )
+                        else:
+                            new_message = await self.bot.send_message(
+                                user_id,
+                                message_text + "\n\n⚠️ _Изображение карты временно недоступно_",
+                                parse_mode="Markdown"
+                            )
                     except Exception as e:
                         logging.error(f"Ошибка при отправке изображения: {e}")
-                        await self.bot.send_message(
+                        new_message = await self.bot.send_message(
                             user_id,
                             message_text,
                             parse_mode="Markdown"
                         )
                 else:
-                    await self.bot.send_message(
+                    new_message = await self.bot.send_message(
                         user_id,
                         message_text,
                         parse_mode="Markdown"
                     )
+                
+                # Сохраняем ID нового сообщения
+                last_messages[str(user_id)] = {"bot": new_message.message_id}
+                
+                # Удаляем старое сообщение после отправки нового
+                if old_message_id:
+                    try:
+                        await self.bot.delete_message(user_id, old_message_id)
+                    except Exception as e:
+                        logging.warning(f"Не удалось удалить старое сообщение: {e}")
                     
                 await asyncio.sleep(0.5)  # Небольшая задержка между отправками
                     

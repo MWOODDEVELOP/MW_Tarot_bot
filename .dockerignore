@@ -1,36 +1,15 @@
-# Git
 .git
 .gitignore
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
+__pycache__
+*.pyc
+*.pyo
+*.pyd
 .Python
-.env
-.venv
+env/
 venv/
-ENV/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Project specific
-data/
-images/
-logs/
+.env
 *.log
-
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-# Documentation
-README.md
-CONTRIBUTING.md
-LICENSE 
+logs/
+.DS_Store
+.idea/
+.vscode/ 

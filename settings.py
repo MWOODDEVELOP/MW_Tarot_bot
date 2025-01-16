@@ -1,24 +1,20 @@
-from typing import List, Dict
-from pydantic_settings import BaseSettings
+import os
+from dotenv import load_dotenv
 
-class Settings(BaseSettings):
-    # Bot settings
-    BOT_TOKEN: str = "YOUR_BOT_TOKEN"
-    ADMIN_IDS: List[int] = [123456789]  # Список ID администраторов
-    MAX_DAILY_SPREADS: int = 3  # Максимальное количество раскладов в день
-    
-    # Paths
-    TAROT_DECK_FILE: str = "data/tarot_deck.json"
-    SAVED_SPREADS_FILE: str = "data/saved_spreads.json"
-    IMAGES_PATH: str = "images/tarot/"
-    USER_DATA_FILE: str = "data/user_data.json"
-    
-    # User preferences
-    DEFAULT_THEME: str = "light"
-    SHOW_CARD_IMAGES: bool = True
-    
-    class Config:
-        env_file = ".env"
-        env_file_encoding = 'utf-8'
+# Загружаем переменные окружения из .env файла
+load_dotenv()
 
-settings = Settings() 
+# Bot settings
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_IDS = [599081669]  # Список ID администраторов
+MAX_DAILY_SPREADS = 3  # Максимальное количество раскладов в день
+
+# Paths
+TAROT_DECK_FILE = "data/tarot_deck.json"
+SAVED_SPREADS_FILE = "data/saved_spreads.json"
+IMAGES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "images", "tarot")
+USER_DATA_FILE = "data/user_data.json"
+
+# User preferences
+DEFAULT_THEME = "light"
+SHOW_CARD_IMAGES = True 
